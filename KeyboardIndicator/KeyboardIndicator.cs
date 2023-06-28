@@ -26,6 +26,7 @@ namespace KeyboardIndicator
 
         private const int NUM_KEYCODE = 144;//Num Lock键：VK_NUMLOCK (144)
         private const int CAPS_KEYCODE = 20;//Caps Lock键：VK_CAPITAL (20)
+        private const int SCROLL_KEYCODE = 0x91; //Scroll Lock
 
         private KeyboardIndicator.KeyBoardHookStruct kbh;
         private KeyboardIndicator.HookProc gHookProc;
@@ -41,6 +42,7 @@ namespace KeyboardIndicator
 
         private bool showNumLock = false;
         private bool showCapsLock = false;
+        private bool showScrollLock = false;
 
         public KeyboardIndicator()
         {
@@ -62,6 +64,14 @@ namespace KeyboardIndicator
             catch (Exception) 
             {
                 showCapsLock = false;
+            }
+            try
+            {
+                showScrollLock = ConfigurationManager.AppSettings["ScrollLock"].ToUpper() == "Y";
+            }
+            catch (Exception)
+            {
+                showScrollLock = false;
             }
 
             if (!showNumLock && !showCapsLock)
@@ -107,6 +117,7 @@ namespace KeyboardIndicator
         {
             this.notifyIconNUM.Visible = showNumLock;
             this.notifyIconCAPS.Visible = showCapsLock;
+            this.notifyIconSCRL.Visible = showScrollLock;
 
             if (showNumLock)
             {
@@ -133,6 +144,20 @@ namespace KeyboardIndicator
                 {
                     this.notifyIconCAPS.Icon = Resources.CapsLockClose;
                     this.notifyIconCAPS.Text = "CapsLock Off";
+                }
+            }
+
+            if (showScrollLock)
+            {
+                if(KeyboardIndicator.GetKeyState(SCROLL_KEYCODE) != 0)
+                {
+                    this.notifyIconSCRL.Icon = Resources.ScrollLockOpen;
+                    this.notifyIconSCRL.Text = "ScrollLock On";
+                }
+                else
+                {
+                    this.notifyIconSCRL.Icon = Resources.ScrollLockClose;
+                    this.notifyIconSCRL.Text = "ScrollLock Off";
                 }
             }
         }
